@@ -1,0 +1,54 @@
+#cloud-config
+
+# Add users to the system. Users are added after groups are added.
+users:
+  - default
+
+write_files:
+  # Apt repository for Kubernetes stuff
+  - content: |
+      deb http://apt.kubernetes.io/ kubernetes-xenial main
+    path: /etc/apt/sources.list.d/kubernetes.list
+  # Create Post install Shell Script
+  - content: |
+      cd ~/src
+
+      # Step 2: Setup SSH keys and pull down my .dotfiles repo
+      cd ~/src
+      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/linux-bootstrap-openssl-1_1_1.tar.gz.enc -H 'Accept: application/octet-stream' --output linux-bootstrap-openssl-1_1_1.tar.gz.enc
+      openssl aes-256-cbc -d -in linux-bootstrap-openssl-1_1_1.tar.gz.enc -out linux-bootstrap.tar.gz
+      tar -xvzf linux-bootstrap.tar.gz
+      mv ssh/* ~/.ssh/
+      mv config ~/.config
+      mkdir -p ~/.kube
+      mv kube/* ~/.kube/
+      chmod 700 ~/.ssh/
+      rm -rf ssh/ ssh.tar.gz
+      ssh -o "StrictHostKeyChecking no" -T git@github.com
+
+      # Step 3: Setup Vim
+      cd ~
+      git clone git@github.com:indrayam/dotfiles.git ~/.dotfiles
+      cd ~/.dotfiles
+      ~/.dotfiles/setup-symlinks-unix-bash.sh
+      rm -rf ~/.vim/bundle/Vundle.vim
+      git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+      vim -c 'PluginInstall' -c 'qall'
+
+      # Step 4: Final touches...
+      mkdir -p /home/ubuntu/workspace
+      sudo usermod -aG docker $USER
+      echo "You're done! Remove this file, exit and log back in to enjoy your new VM"
+    path: /home/ubuntu/complete-os-setup.sh
+    permissions: '0755'
+
+runcmd:
+  - chown -R ubuntu.ubuntu /home/ubuntu
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt-get install -y --allow-unauthenticated docker-ce=$(apt-cache madison docker-ce | grep 19.03 | head -1 | awk '{print $3}')
+  - apt-get install -y kubectl
+  - chown -R ubuntu.ubuntu /usr/local/src
+  - ln -s /usr/local/src /home/ubuntu/src
+  - chown -h ubuntu.ubuntu /home/ubuntu/src
+
