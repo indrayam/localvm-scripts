@@ -38,7 +38,7 @@ write_files:
       cd ~
       git clone git@github.com:indrayam/dotfiles.git ~/.dotfiles
       cd ~/.dotfiles
-      ~/.dotfiles/setup-symlinks-bash.sh
+      ~/.dotfiles/setup-symlinks-linux.sh
       rm -rf ~/.vim/bundle/Vundle.vim
       git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
       vim -c 'PluginInstall' -c 'qall'
