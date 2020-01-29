@@ -46,7 +46,12 @@ runcmd:
   - chown -R ubuntu.ubuntu /home/ubuntu
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - add-apt-repository -y ppa:jonathonf/vim
+  - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+  - apt-get update
   - apt-get install -y --allow-unauthenticated docker-ce=$(apt-cache madison docker-ce | grep 19.03 | head -1 | awk '{print $3}')
+  - apt-get install -y zsh
+  - apt-get install -y vim
   - apt-get install -y kubectl
   - chown -R ubuntu.ubuntu /usr/local/src
   - ln -s /usr/local/src /home/ubuntu/src
