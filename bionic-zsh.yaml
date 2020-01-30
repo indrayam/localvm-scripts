@@ -34,7 +34,7 @@ write_files:
       rm -rf ssh/ ssh.tar.gz
       ssh -o "StrictHostKeyChecking no" -T git@github.com
 
-      # Step 3: Setup Vim
+      # Step 3: Setup vim and kube-ps1
       cd ~
       git clone git@github.com:indrayam/dotfiles.git ~/.dotfiles
       cd ~/.dotfiles

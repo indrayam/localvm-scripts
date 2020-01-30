@@ -26,7 +26,7 @@ write_files:
       rm -rf ssh/ ssh.tar.gz
       ssh -o "StrictHostKeyChecking no" -T git@github.com
 
-      # Step 3: Setup Vim
+      # Step 3: Setup vim and kube-ps1
       cd ~
       git clone git@github.com:indrayam/dotfiles.git ~/.dotfiles
       cd ~/.dotfiles
@@ -34,6 +34,7 @@ write_files:
       rm -rf ~/.vim/bundle/Vundle.vim
       git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
       vim -c 'PluginInstall' -c 'qall'
+      git clone git@github.com:jonmosco/kube-ps1.git ~/.kube-ps1
 
       # Step 4: Final touches...
       mkdir -p /home/ubuntu/workspace
