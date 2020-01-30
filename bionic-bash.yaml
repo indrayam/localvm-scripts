@@ -15,9 +15,9 @@ write_files:
 
       # Step 2: Setup SSH keys
       cd ~/src
-      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/zsh-bootstrap-bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output zsh-bootstrap-bionic.tar.gz.enc
-      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in zsh-bootstrap-bionic.tar.gz.enc -out zsh-bootstrap-bionic.tar.gz
-      tar -xvzf zsh-bootstrap-bionic.tar.gz
+      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/bash-bootstrap-bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output bash-bootstrap-bionic.tar.gz.enc
+      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in bash-bootstrap-bionic.tar.gz.enc -out bash-bootstrap-bionic.tar.gz
+      tar -xvzf bash-bootstrap-bionic.tar.gz
       mv dotfiles/ssh/* ~/.ssh/
       chmod 700 ~/.ssh/
       ssh -o "StrictHostKeyChecking no" -T git@github.com
@@ -47,7 +47,6 @@ runcmd:
   - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   - apt-get update
   - apt-get install -y --allow-unauthenticated docker-ce=$(apt-cache madison docker-ce | grep 19.03 | head -1 | awk '{print $3}')
-  - apt-get install -y zsh
   - apt-get install -y vim
   - apt-get install -y kubectl
   - chown -R ubuntu.ubuntu /usr/local/src
