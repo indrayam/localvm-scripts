@@ -23,9 +23,11 @@ write_files:
 
       # Step 2: Setup SSH keys
       cd ~/src
-      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/zsh-bootstrap-bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output zsh-bootstrap-bionic.tar.gz.enc
-      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in zsh-bootstrap-bionic.tar.gz.enc -out zsh-bootstrap-bionic.tar.gz
-      tar -xvzf zsh-bootstrap-bionic.tar.gz
+      curl -L https://storage.googleapis.com/seaz/bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output bionic.tar.gz.enc
+      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in bionic.tar.gz.enc -out bionic.tar.gz
+      tar -xvzf bionic.tar.gz
+      mkdir -p ~/.kube
+      mv dotfiles/kube/* ~/.kube/
       mv dotfiles/ssh/* ~/.ssh/
       chmod 700 ~/.ssh/
       ssh -o "StrictHostKeyChecking no" -T git@github.com

@@ -15,9 +15,9 @@ write_files:
 
       # Step 2: Setup SSH keys
       cd /tmp
-      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/bash-bootstrap-bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output bash-bootstrap-bionic.tar.gz.enc
-      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in bash-bootstrap-bionic.tar.gz.enc -out bash-bootstrap-bionic.tar.gz
-      tar -xvzf bash-bootstrap-bionic.tar.gz
+      curl -L https://storage.googleapis.com/seaz/bionic-lite.tar.gz.enc -H 'Accept: application/octet-stream' --output bionic-lite.tar.gz.enc
+      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in bionic-lite.tar.gz.enc -out bionic-lite.tar.gz
+      tar -xvzf bionic-lite.tar.gz
       mv dotfiles ~/.dotfiles
 
       # Step 3: Pull down my .dotfiles repo and setup vim, kube-ps1
