@@ -54,4 +54,3 @@ runcmd:
   - chown -R ubuntu.ubuntu /usr/local/src
   - ln -s /usr/local/src /home/ubuntu/src
   - chown -h ubuntu.ubuntu /home/ubuntu/src
-
