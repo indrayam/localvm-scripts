@@ -21,24 +21,20 @@ write_files:
       sh install.sh --unattended
       rm install.sh*
 
-      # Step 2: Setup SSH keys and pull down my .dotfiles repo
+      # Step 2: Setup SSH keys
       cd ~/src
-      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/linux-bootstrap-openssl-1_1_1.tar.gz.enc -H 'Accept: application/octet-stream' --output linux-bootstrap-openssl-1_1_1.tar.gz.enc
-      openssl aes-256-cbc -d -in linux-bootstrap-openssl-1_1_1.tar.gz.enc -out linux-bootstrap.tar.gz
-      tar -xvzf linux-bootstrap.tar.gz
-      mv ssh/* ~/.ssh/
-      mv config ~/.config
-      mkdir -p ~/.kube
-      mv kube/* ~/.kube/
+      curl -L https://storage.googleapis.com/us-east-4-anand-files/misc-files/zsh-bootstrap-bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output zsh-bootstrap-bionic.tar.gz.enc
+      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in zsh-bootstrap-bionic.tar.gz.enc -out zsh-bootstrap-bionic.tar.gz
+      tar -xvzf zsh-bootstrap-bionic.tar.gz
+      mv dotfiles/ssh/* ~/.ssh/
       chmod 700 ~/.ssh/
-      rm -rf ssh/ ssh.tar.gz
       ssh -o "StrictHostKeyChecking no" -T git@github.com
 
-      # Step 3: Setup vim and kube-ps1
+      # Step 3: Pull down my .dotfiles repo and setup vim, kube-ps1
       cd ~
       git clone git@github.com:indrayam/dotfiles.git ~/.dotfiles
       cd ~/.dotfiles
-      ~/.dotfiles/setup-symlinks-linux.sh
+      ~/.dotfiles/setup-symlinks-bash.sh
       rm -rf ~/.vim/bundle/Vundle.vim
       git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
       vim -c 'PluginInstall' -c 'qall'
