@@ -11,10 +11,10 @@ write_files:
     path: /etc/apt/sources.list.d/kubernetes.list
   # Create Post install Shell Script
   - content: |
+      # Step 1: Install oh-my-zsh
       cd ~/src
 
       # Step 2: Setup SSH keys
-      cd ~/src
       curl -L https://storage.googleapis.com/seaz/bionic.tar.gz.enc -H 'Accept: application/octet-stream' --output bionic.tar.gz.enc
       openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in bionic.tar.gz.enc -out bionic.tar.gz
       tar -xvzf bionic.tar.gz

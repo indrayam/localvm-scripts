@@ -11,9 +11,6 @@ write_files:
     path: /etc/apt/sources.list.d/kubernetes.list
   # Create Post install Shell Script
   - content: |
-      cd ~/src
-      sudo chsh -s /usr/bin/zsh ubuntu
-
       # Step 1: Install oh-my-zsh
       cd ~/src
       sudo /usr/bin/chsh -s /usr/bin/zsh ubuntu
