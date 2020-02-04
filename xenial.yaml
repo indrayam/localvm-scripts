@@ -21,7 +21,7 @@ write_files:
       # Step 2: Setup SSH keys
       cd ~/src
       curl -L https://storage.googleapis.com/seaz/xenial.tar.gz.enc -H 'Accept: application/octet-stream' --output xenial.tar.gz.enc
-      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in xenial.tar.gz.enc -out xenial.tar.gz
+      openssl aes-256-cbc -d -in xenial.tar.gz.enc -out xenial.tar.gz
       tar -xvzf xenial.tar.gz
       mkdir -p ~/.kube
       mv dotfiles/kube/* ~/.kube/
