@@ -1,86 +1,44 @@
-#!/bin/bash
-export DEBIAN_FRONTEND=noninteractive
+#cloud-config
 
-# Replace this with the token 
-TOKEN=xxxxxx.yyyyyy
+# Add users to the system. Users are added after groups are added.
+users:
+  - default
 
-# Basic Setup
-USER_ID="${USER_ID:-ubuntu}"
-USER_HOME="/home/${USER_ID}"
+write_files:
+  # Apt repository for Kubernetes stuff
+  - content: |
+      deb http://apt.kubernetes.io/ kubernetes-xenial main
+    path: /etc/apt/sources.list.d/kubernetes.list
+  # Create Post install Shell Script
+  - content: |
+      cd /tmp
 
-# Update /etc/hosts with the proper entry
-HOST=$(hostname)
-export CTRLPLANE_IP=$(hostname -I | awk '{print $1}')
-sed -i "1s/^/${VM_IP} ${HOST}\n/" /etc/hosts
+      # Step 2: Setup SSH keys
+      cd /tmp
+      curl -L https://storage.googleapis.com/seaz/xenial-lite.tar.gz.enc -H 'Accept: application/octet-stream' --output xenial-lite.tar.gz.enc
+      openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -d -in xenial-lite.tar.gz.enc -out xenial-lite.tar.gz
+      tar -xvzf bionic-lite.tar.gz
+      mv dotfiles ~/.dotfiles
 
-## Pre-requisite steps
-add-apt-repository -y ppa:jonathonf/vim
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF | tee /etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-EOF
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-apt-get update
+      # Step 3: Pull down my .dotfiles repo and setup vim, kube-ps1
+      cd ~
+      ~/.dotfiles/setup-symlinks-bash.sh
 
-# Install Essentials
-apt-get install -y apt-transport-https ca-certificates software-properties-common nfs-common vim zsh curl wget tar zip socat jq silversearcher-ag
-chown -R ${USER_ID}.${USER_ID} /usr/local/src
-ln -s /usr/local/src ${USER_HOME}/src
-chown -h ${USER_ID}.${USER_ID} ${USER_HOME}/src
+      # Step 4: Final touches...
+      mkdir -p /home/ubuntu/workspace
+      echo "You're done! Remove this file, exit and log back in to enjoy your new VM"
+    path: /home/ubuntu/complete-os-setup.sh
+    permissions: '0755'
 
-# Create a shell script to finish personalizing my non-root account setup
-cat > ${USER_HOME}/complete-os-setup.sh <<EOF
-cd /tmp
-
-# Step 2: Setup SSH keys
-curl -L https://storage.googleapis.com/seaz/xenial-lite.tar.gz.enc -H 'Accept: application/octet-stream' --output xenial-lite.tar.gz.enc
-openssl aes-256-cbc -d -in xenial-lite.tar.gz.enc -out xenial-lite.tar.gz
-tar -xvzf xenial-lite.tar.gz
-mv dotfiles ~/.dotfiles
-
-# Step 3: Pull down my .dotfiles repo and setup vim, kube-ps1
-cd ~
-~/.dotfiles/setup-symlinks-bash.sh
-
-# Step 4: Final touches...
-mkdir -p /home/ubuntu/workspace
-echo "You're done! Remove this file, exit and log back in to enjoy your new VM"
-EOF
-chmod +x ${USER_HOME}/complete-os-setup.sh
-chown ${USER_ID}.${USER_ID} ${USER_HOME}/complete-os-setup.sh
-
-# Stop Firewall Service
-systemctl stop firewalld
-systemctl disable firewalld
-
-## Install tools
-cd ${USER_HOME}/src
-
-## Download binaries and/or source
-wget -q --https-only --timestamping \
-  https://github.com/ahmetb/kubectx/archive/v0.7.1.tar.gz \
-  https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy
-chown ${USER_ID}.${USER_ID} ${USER_HOME}/src/*
-
-## Install kubectx, kubens
-tar -xvzf v0.7.1.tar.gz
-chown -R ${USER_ID}.${USER_ID} kubectx-0.7.1/
-mv kubectx-0.7.1/kubectx kubectx-0.7.1/kubens /usr/local/bin
-
-## Install diff-so-fancy
-cd ${USER_HOME}/src
-chmod +x diff-so-fancy
-mv diff-so-fancy /usr/local/bin
-diff-so-fancy -v
-
-# Container Tools
-apt-get install -y --allow-unauthenticated docker-ce=$(apt-cache madison docker-ce | grep 19.03 | head -1 | awk '{print $3}')
-apt-get install -y kubectl
-
-# Upgrade the OS
-apt -y update
-apt -y upgrade
-apt -y install unattended-upgrades apt-listchanges bsd-mailx
-
-
+runcmd:
+  - chown -R ubuntu.ubuntu /home/ubuntu
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - add-apt-repository -y ppa:jonathonf/vim
+  - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+  - apt-get update
+  - apt-get install -y zsh 
+  - apt-get install -y vim
+  - chown -R ubuntu.ubuntu /usr/local/src
+  - ln -s /usr/local/src /home/ubuntu/src
+  - chown -h ubuntu.ubuntu /home/ubuntu/src
