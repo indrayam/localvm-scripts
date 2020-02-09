@@ -38,6 +38,15 @@ write_files:
       git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
       vim -c 'PluginInstall' -c 'qall'
       git clone git@github.com:jonmosco/kube-ps1.git ~/.kube-ps1
+      git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+      ~/.fzf/install
+      sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
+      sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+      sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+      mkdir -p ~/.oh-my-zsh/completions
+      chmod -R 755 ~/.oh-my-zsh/completions
+      ln -s /opt/kubectx/completion/kubectx.zsh ~/.oh-my-zsh/completions/_kubectx.zsh
+      ln -s /opt/kubectx/completion/kubens.zsh ~/.oh-my-zsh/completions/_kubens.zsh
 
       # Step 4: Final touches...
       mkdir -p /home/ubuntu/workspace
@@ -60,4 +69,5 @@ runcmd:
   - chown -R ubuntu.ubuntu /usr/local/src
   - ln -s /usr/local/src /home/ubuntu/src
   - chown -h ubuntu.ubuntu /home/ubuntu/src
+
 
